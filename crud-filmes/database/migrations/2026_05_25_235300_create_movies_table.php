@@ -11,11 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('movies', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
-    }
+    Schema::create('movies', function (Blueprint $table) {
+        $table->id();
+        $table->string('title');                // VARCHAR para o Título
+        $table->text('description');            // TEXT para a Descrição longa
+        $table->integer('duration');            // INT para a Duração em minutos
+        $table->string('category');             // VARCHAR para a Categoria
+        $table->decimal('budget', 15, 2);       // DECIMAL (15 dígitos, 2 decimais) para Orçamento
+        $table->string('language');             // VARCHAR para o Idioma
+        $table->timestamps();                   // Cria as colunas created_at e updated_at
+    });
+}
 
     /**
      * Reverse the migrations.
