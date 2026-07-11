@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
     <h1 class="my-4">Adicionar Categoria</h1>
+
     <form action="{{ route('categories.store') }}" method="POST">
         @csrf
         <div class="mb-3">
@@ -13,6 +14,7 @@
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
+
         <button type="submit" class="btn btn-success">
             <i class="bi bi-save"></i> Salvar
         </button>
