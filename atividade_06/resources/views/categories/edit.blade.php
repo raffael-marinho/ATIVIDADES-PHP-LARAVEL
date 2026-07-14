@@ -1,5 +1,7 @@
 @extends('layouts.app')
-
+<a href="{{ route('entidade.index') }}" class="btn btn-secondary">
+    <i class="bi bi-arrow-left"></i> Voltar
+</a>
 @section('content')
 <div class="container">
     <h1 class="my-4">Editar Categoria</h1>

@@ -1,5 +1,7 @@
 @extends('layouts.app')
-
+<a href="{{ url('/') }}" class="btn btn-secondary mb-3">
+    <i class="bi bi-arrow-left"></i> Voltar para o Início
+</a>
 @section('content')
 <div class="container">
     <h1 class="my-4">Lista de Categorias</h1>
@@ -51,3 +53,8 @@
     </table>
 </div>
 @endsection
+<div class="container">
+    <a href="{{ url('/') }}" class="btn btn-secondary mb-3">
+        <i class="bi bi-arrow-left"></i> Voltar para o Início
+    </a>
+    <!-- resto do conteúdo -->

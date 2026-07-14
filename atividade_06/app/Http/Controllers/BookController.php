@@ -8,6 +8,7 @@ use App\Models\Publisher;
 use App\Models\Author;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
@@ -15,15 +16,10 @@ class BookController extends Controller
     public function index()
     {
         $books = Book::with('author')->paginate(20);
-
         return view('books.index', compact('books'));
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | NOVOS MÉTODOS DA ATIVIDADE 6
-    |--------------------------------------------------------------------------
-    */
+    // ==================== CRUD PADRÃO (com upload de capa) ====================
 
     public function create()
     {
@@ -33,38 +29,87 @@ class BookController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'publisher_id' => 'required|exists:publishers,id',
-            'author_id' => 'required|exists:authors,id',
-            'category_id' => 'required|exists:categories,id',
-            'pages' => 'required|integer',
-            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'title'          => 'required|string|max:255',
+            'publisher_id'   => 'required|exists:publishers,id',
+            'author_id'      => 'required|exists:authors,id',
+            'category_id'    => 'required|exists:categories,id',
+            'pages'          => 'required|integer',
+            'published_year' => 'nullable|integer|min:1000|max:' . date('Y'),
+            'cover_image'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $imagePath = null;
+        $data = $request->all();
 
         if ($request->hasFile('cover_image')) {
-
-            $imagePath = $request->file('cover_image')
-                                 ->store('covers', 'public');
+            $path = $request->file('cover_image')->store('covers', 'public');
+            $data['cover_image'] = $path;
         }
 
-        Book::create([
-            'title' => $request->title,
-            'publisher_id' => $request->publisher_id,
-            'author_id' => $request->author_id,
-            'category_id' => $request->category_id,
-            'published_year' => $request->published_year,
-            'pages' => $request->pages,
-            'cover_image' => $imagePath,
-        ]);
+        Book::create($data);
 
-        return redirect()
-            ->route('books.index')
-            ->with('success', 'Livro criado com sucesso.');
+        return redirect()->route('books.index')
+                         ->with('success', 'Livro criado com sucesso.');
     }
 
-    // Versão 1: Create com Input de ID
+    public function show(Book $book)
+    {
+        $book->load(['author', 'publisher', 'category', 'users']);
+        $users = User::all();
+        return view('books.show', compact('book', 'users'));
+    }
+
+    public function edit(Book $book)
+    {
+        $publishers = Publisher::all();
+        $authors    = Author::all();
+        $categories = Category::all();
+        return view('books.edit', compact('book', 'publishers', 'authors', 'categories'));
+    }
+
+    public function update(Request $request, Book $book)
+    {
+        $request->validate([
+            'title'          => 'required|string|max:255',
+            'publisher_id'   => 'required|exists:publishers,id',
+            'author_id'      => 'required|exists:authors,id',
+            'category_id'    => 'required|exists:categories,id',
+            'pages'          => 'required|integer',
+            'published_year' => 'nullable|integer|min:1000|max:' . date('Y'),
+            'cover_image'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $data = $request->all();
+
+        if ($request->hasFile('cover_image')) {
+            // Deletar imagem antiga
+            if ($book->cover_image) {
+                Storage::disk('public')->delete($book->cover_image);
+            }
+            $path = $request->file('cover_image')->store('covers', 'public');
+            $data['cover_image'] = $path;
+        }
+
+        $book->update($data);
+
+        return redirect()->route('books.index')
+                         ->with('success', 'Livro atualizado com sucesso.');
+    }
+
+    public function destroy(Book $book)
+    {
+        // Deletar imagem de capa
+        if ($book->cover_image) {
+            Storage::disk('public')->delete($book->cover_image);
+        }
+
+        $book->delete();
+
+        return redirect()->route('books.index')
+                         ->with('success', 'Livro excluído com sucesso.');
+    }
+
+    // ==================== VERSÃO 1: CREATE COM INPUT DE ID ====================
+
     public function createWithId()
     {
         return view('books.create-id');
@@ -73,60 +118,43 @@ class BookController extends Controller
     public function storeWithId(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
+            'title'        => 'required|string|max:255',
             'publisher_id' => 'required|exists:publishers,id',
-            'author_id' => 'required|exists:authors,id',
-            'category_id' => 'required|exists:categories,id',
+            'author_id'    => 'required|exists:authors,id',
+            'category_id'  => 'required|exists:categories,id',
+            'pages'        => 'required|integer',
         ]);
 
         Book::create($request->all());
 
-        return redirect()
-            ->route('books.index')
-            ->with('success', 'Livro criado com sucesso.');
+        return redirect()->route('books.index')
+                         ->with('success', 'Livro criado com sucesso (via ID).');
     }
 
-    // Versão 2: Create com Select
+    // ==================== VERSÃO 2: CREATE COM SELECT ====================
+
     public function createWithSelect()
     {
         $publishers = Publisher::all();
-        $authors = Author::all();
+        $authors    = Author::all();
         $categories = Category::all();
 
-        return view(
-            'books.create-select',
-            compact('publishers', 'authors', 'categories')
-        );
+        return view('books.create-select', compact('publishers', 'authors', 'categories'));
     }
 
     public function storeWithSelect(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
+            'title'        => 'required|string|max:255',
             'publisher_id' => 'required|exists:publishers,id',
-            'author_id' => 'required|exists:authors,id',
-            'category_id' => 'required|exists:categories,id',
+            'author_id'    => 'required|exists:authors,id',
+            'category_id'  => 'required|exists:categories,id',
+            'pages'        => 'required|integer',
         ]);
 
         Book::create($request->all());
 
-        return redirect()
-            ->route('books.index')
-            ->with('success', 'Livro criado com sucesso.');
-    }
-
-    // Visualização de detalhes
-    public function show(Book $book)
-    {
-        $book->load([
-            'author',
-            'publisher',
-            'category',
-            'users'
-        ]);
-
-        $users = User::all();
-
-        return view('books.show', compact('book', 'users'));
+        return redirect()->route('books.index')
+                         ->with('success', 'Livro criado com sucesso (via Select).');
     }
 }

@@ -1,5 +1,7 @@
 @extends('layouts.app')
-
+<a href="{{ route('entidade.index') }}" class="btn btn-secondary mt-3">
+    <i class="bi bi-arrow-left"></i> Voltar
+</a>
 @section('content')
 
 <div class="container">
