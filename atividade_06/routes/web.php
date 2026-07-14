@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\BorrowingController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -35,24 +36,36 @@ Route::post('/books/create-id-number', [BookController::class, 'storeWithId'])->
 Route::get('/books/create-select', [BookController::class, 'createWithSelect'])->name('books.create.select');
 Route::post('/books/create-select', [BookController::class, 'storeWithSelect'])->name('books.store.select');
 
-// Rota Resource para as demais operações (index, show, edit, update, destroy)
-Route::get('/books/create', [BookController::class, 'create'])
-    ->name('books.create');
+// Rotas padrão de criação (create e store)
+Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
+Route::post('/books', [BookController::class, 'store'])->name('books.store');
 
-Route::post('/books', [BookController::class, 'store'])
-    ->name('books.store');
-
+// Resource para as demais operações (index, show, edit, update, destroy)
 Route::resource('books', BookController::class)->except(['create', 'store']);
 
-Route::post('/books/{book}/borrow', [BorrowingController::class, 'store'])
-    ->name('books.borrow');
+/*
+|--------------------------------------------------------------------------
+| Atividade 5.2 - Sistema de Empréstimos
+|--------------------------------------------------------------------------
+*/
+Route::post('/books/{book}/borrow', [BorrowingController::class, 'store'])->name('books.borrow');
+Route::get('/users/{user}/borrowings', [BorrowingController::class, 'userBorrowings'])->name('users.borrowings');
+Route::patch('/borrowings/{borrowing}/return', [BorrowingController::class, 'returnBook'])->name('borrowings.return');
 
+<<<<<<< HEAD
 Route::get('/users/{user}/borrowings', [BorrowingController::class, 'userBorrowings'])
     ->name('users.borrowings');
 
 Route::patch('/borrowings/{borrowing}/return', [BorrowingController::class, 'returnBook'])
     ->name('borrowings.return');
 
+=======
+/*
+|--------------------------------------------------------------------------
+| Atividade 4.2/5.1 - CRUD de Autores, Editoras e Usuários
+|--------------------------------------------------------------------------
+*/
+>>>>>>> 99fdf1e0a8812d04f8734f6fc5c9b0a03c1a4b11
 Route::resource('authors', AuthorController::class);
 Route::resource('publishers', PublisherController::class);
 Route::resource('users', UserController::class)->except(['create', 'store', 'destroy']);

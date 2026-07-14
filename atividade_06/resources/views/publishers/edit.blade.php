@@ -1,7 +1,11 @@
 @extends('layouts.app')
+<<<<<<< HEAD
 <a href="{{ route('entidade.index') }}" class="btn btn-secondary">
     <i class="bi bi-arrow-left"></i> Voltar
 </a>
+=======
+
+>>>>>>> 99fdf1e0a8812d04f8734f6fc5c9b0a03c1a4b11
 @section('content')
 <div class="container">
     <h1 class="my-4">Editar Editora</h1>
@@ -22,7 +26,11 @@
         </div>
 
         <button type="submit" class="btn btn-success">Atualizar</button>
+<<<<<<< HEAD
         <a href="{{ route('publishers.index') }}" class="btn btn-secondary">Cancelar</a>
+=======
+        <a href="{{ route('publishers.index') }}" class="btn btn-secondary">Voltar</a>
+>>>>>>> 99fdf1e0a8812d04f8734f6fc5c9b0a03c1a4b11
     </form>
 </div>
 @endsection

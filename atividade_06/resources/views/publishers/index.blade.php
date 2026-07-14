@@ -1,9 +1,19 @@
 @extends('layouts.app')
+<<<<<<< HEAD
 <a href="{{ url('/') }}" class="btn btn-secondary mb-3">
     <i class="bi bi-arrow-left"></i> Voltar para o Início
 </a>
 @section('content')
 <div class="container">
+=======
+
+@section('content')
+<div class="container">
+    <a href="{{ url('/') }}" class="btn btn-secondary mb-3">
+        <i class="bi bi-arrow-left"></i> Voltar para o Início
+    </a>
+
+>>>>>>> 99fdf1e0a8812d04f8734f6fc5c9b0a03c1a4b11
     <h1 class="my-4">Lista de Editoras</h1>
 
     @if(session('success'))
@@ -51,9 +61,13 @@
         </tbody>
     </table>
 </div>
+<<<<<<< HEAD
 @endsection
 <div class="container">
     <a href="{{ url('/') }}" class="btn btn-secondary mb-3">
         <i class="bi bi-arrow-left"></i> Voltar para o Início
     </a>
     <!-- resto do conteúdo -->
+=======
+@endsection
+>>>>>>> 99fdf1e0a8812d04f8734f6fc5c9b0a03c1a4b11

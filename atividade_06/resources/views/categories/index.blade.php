@@ -4,16 +4,19 @@
 </a>
 @section('content')
 <div class="container">
+    <a href="{{ url('/') }}" class="btn btn-secondary mb-3">
+        <i class="bi bi-arrow-left"></i> Voltar para o Início
+    </a>
+
     <h1 class="my-4">Lista de Categorias</h1>
+
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
     <a href="{{ route('categories.create') }}" class="btn btn-success mb-3">
         <i class="bi bi-plus"></i> Adicionar Categoria
     </a>
-
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
 
     <table class="table table-striped">
         <thead>
